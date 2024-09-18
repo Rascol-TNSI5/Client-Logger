@@ -1,0 +1,3 @@
+sqlite4
+pycryptodomex
+pywin32
