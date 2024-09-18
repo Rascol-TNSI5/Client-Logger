@@ -4,7 +4,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
-char SERVER_URL[]  = "http://localhost/"; // j'ai pas mis de const car problème avec srtcat  sur send_to_server
+const char SERVER_URL[]  = "http://localhost/";
 
 size_t write_callback(void* contents, size_t size, size_t nmemb, void* userp) {
 
@@ -24,10 +24,13 @@ void send_to_server(char* route, char* data){
     long status_code = 0;
     curl = curl_easy_init();
 
+    char final_url[256];
+    snprintf(final_url, 256, "%s%s", SERVER_URL, route);
+
     if(curl){
         printf("[*] Requette sur %s\n", route);
 
-        curl_easy_setopt(curl, CURLOPT_URL, strcat(SERVER_URL, route));
+        curl_easy_setopt(curl, CURLOPT_URL, final_url);
 
         headers = curl_slist_append(headers, "Content-Type: application/json");
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
@@ -36,7 +39,7 @@ void send_to_server(char* route, char* data){
         curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data);
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
 
-        curl_easy_perform(curl);
+        curl_easy_perform(curl); // envoyer la requette
 
         curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &status_code);
 
@@ -53,13 +56,16 @@ void send_to_server(char* route, char* data){
 
 int upload_to_server(char * file_path){
 
-    /*Upload un fichier via son path sur le serveur via 
+    /* Lire et Upload un fichier via son path sur le serveur via 
     requette  PUT sur /upload.php*/
 
     CURL *curl;
     long status_code = 0;
     CURLcode res;
     struct stat file_info;
+
+    char final_url[256];
+    snprintf(final_url, 256, "%s%s", SERVER_URL, "upload.php");
 
     //lire le fichier
     FILE *fd;
@@ -73,7 +79,7 @@ int upload_to_server(char * file_path){
     curl = curl_easy_init();
     if(curl) {
         printf("[*] Requette sur /upload.php\n");
-        curl_easy_setopt(curl, CURLOPT_URL, strcat(SERVER_URL,"upload.php"));
+        curl_easy_setopt(curl, CURLOPT_URL, final_url);
         curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);
         curl_easy_setopt(curl, CURLOPT_READDATA, fd);
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
