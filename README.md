@@ -1,26 +1,29 @@
-# Client-Logger
+# Client-Logger
 
-Client de l'InfoStealer.
+---
 
-## Compilation
+Ici se trouvera désormais l'ensemble du code servant au '_client_', qui sera donc compilé en un seul fichier exécutable.
 
-Pour compiler le programme tu as besoin de [msys2](https://www.msys2.org//).
+## Compilation
 
-**Dans msys2**:
+Pour compiler le programe il faudra [msys2](https://www.msys2.org/) en plus de [MinGW](https://sourceforge.net/projects/mingw/).
+
+**Dans msys2 il faut executer les 2 commandes suivante**:
 
 ```sh
 pacman -S mingw-w64-ucrt-x86_64-gcc
+
 pacman -S mingw-w64-ucrt-x86_64-curl
 ```
 
-Ensuite, tu dois ajouter C:\msys64\ucrt64\bin dans la variable d'environnement Path
+Ensuite, il faut ajouter "_C:\msys64\ucrt64\bin_" dans la variable d'environnement Path
 
-Puis exécute le fichier suivant dans le projet:
+Puis exécute le fichier suivant dans le dossier ou se trouve _main.c_:
 
 ```sh
-compile.bat
+.\compile.bat
 ```
 
 ## License
 
-This project is under the MIT License.
+Ce Projet est sous la License MIT.
