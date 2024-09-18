@@ -1,4 +1,4 @@
 .vscode
 build/main.exe
-scripts/decrypted_password.csv
+decrypted_password.csv
 *.exe
