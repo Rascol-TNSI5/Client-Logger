@@ -4,7 +4,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
-const char SERVER_URL[]  = "http://localhost/";
+const char SERVER_URL[]  = "http://google.com/";
 
 size_t write_callback(void* contents, size_t size, size_t nmemb, void* userp) {
 
