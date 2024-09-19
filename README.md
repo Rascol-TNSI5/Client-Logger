@@ -1,10 +1,10 @@
-# Client-Logger
+# Client-Logger
 
 ---
 
 Ici se trouvera désormais l'ensemble du code servant au '_client_', qui sera donc compilé en un seul fichier exécutable.
 
-## Compilation
+## Compilation
 
 Pour compiler le programe il faudra [msys2](https://www.msys2.org/) en plus de [MinGW](https://sourceforge.net/projects/mingw/).
 
