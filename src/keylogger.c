@@ -14,7 +14,7 @@ void key_code_to_string(){
     
     /*
     A CODER:
-
+ je vais le faire
     Fonction qui permet d'avoir une touche exacte avec son code décimal, attention c'est pas de l'ascii je crois
     raison pour laquelle les minuscues sont enregistrés en majuscules 
     */
