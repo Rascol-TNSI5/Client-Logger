@@ -8,6 +8,7 @@ typedef struct {
     char windows_version[80];
 } COMPUTER_INFOS;
 
+
 void get_computer_info(COMPUTER_INFOS *cmp_info);
 
 #endif

