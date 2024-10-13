@@ -47,12 +47,12 @@ void key_code_to_string(int key, char *string_key, int value_in_string_key){
         default:
             if (key >= 49 && key <= 57) {
                 string_key[0] = (char)key;
-                string_key[1] = '\0'; 
+                string_key[1] = '\0';  // null byte -> https://zestedesavoir.com/tutoriels/755/le-langage-c-1/1043_aggregats-memoire-et-fichiers/4283_les-chaines-de-caracteres/#avec-une-sentinelle
             } else if (key >= 65 && key <= 90) {
                 string_key[0] = (char)key; 
                 string_key[1] = '\0';
             } else if(key >= 96 && key <= 105){
-                string_key[0] = (char)(key - 48); // le nombre associé a la touche 47 = 49-96
+                string_key[0] = (char)(key - 48); // le nombre associé a la touche 47 = 49 (les numeros de 0 à 9)-96
                 string_key[1] = '\0';    
             }else{
                 value_in_string_key = 0;
