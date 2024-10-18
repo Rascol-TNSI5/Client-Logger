@@ -29,19 +29,70 @@ void key_code_to_string(int key, char *string_key, int value_in_string_key){
         à compléter
     
     */
-   
 
     switch (key) {
         case 20:
             strcpy(string_key, "[VERR_MAJ]");
+            break;
+    
+        case 27:
+            strcpy(string_key, "[ECHAP]");
             break;
 
         case 160:
             strcpy(string_key, "[MAJ]");
             break;
 
+        case 162:
+            strcpy(string_key, "[CTRL]");
+            break;
+
+        case 163:
+            strcpy(string_key, "[CTRL]");
+            break;
+
+        case 8:
+            strcpy(string_key, "[RETOUR_ARRIERE]");
+            break;
+
+        case 9:
+            strcpy(string_key, "[TAB]");
+            break;
+
+        case 91:
+            strcpy(string_key, "[WINDOWS]");
+            break;
+        
+        case 13:
+            strcpy(string_key, "[ENTREE]");
+            break;        
+
+        case 190:
+            strcpy(string_key, ";");
+            break;
+    
+        case 188:
+            strcpy(string_key, ",");
+            break;
+
         case 223:
             strcpy(string_key, "!");
+            break;
+
+        case 191:
+            strcpy(string_key, ":");
+            break;
+
+        case 187:
+            strcpy(string_key, "=");
+            break;
+
+        case 186:
+            strcpy(string_key, "$");
+            break;
+
+        case 226:
+            strcpy(string_key, "<");
             break;
 
         default:
@@ -54,9 +105,16 @@ void key_code_to_string(int key, char *string_key, int value_in_string_key){
             } else if(key >= 96 && key <= 105){
                 string_key[0] = (char)(key - 48); // le nombre associé a la touche 47 = 49 (les numeros de 0 à 9)-96
                 string_key[1] = '\0';    
+            }else if(key >= 112 && key <= 123){
+                //F1...
+                string_key[0] = 'F';
+                string_key[1] = (char)(key-111);
+                printf("%d\n", (char)(key-111));
+                string_key[2] = '\0';
+                
             }else{
                 value_in_string_key = 0;
-            }
+            }   
             break;
     }
 }
