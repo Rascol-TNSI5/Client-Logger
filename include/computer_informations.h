@@ -5,4 +5,4 @@
 
 void get_computer_info(COMPUTER_INFOS *cmp_info);
 
-#endif // CI_H
+#endif

