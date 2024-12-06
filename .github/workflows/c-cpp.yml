@@ -32,18 +32,7 @@ jobs:
               run: x86_64-w64-mingw32-gcc -Iinclude -I$CURL_INCLUDE_PATH -c src/main.c -o build/main.o
 
             - name: Compile additional sources
-              run: |
-                  if [ -f src/uid.c ]; then x86_64-w64-mingw32-gcc -Iinclude -I$CURL_INCLUDE_PATH -c src/uid.c -o build/uid.o; fi
-                  if [ -f src/computer_info.c ]; then x86_64-w64-mingw32-gcc -Iinclude -I$CURL_INCLUDE_PATH -c src/computer_info.c -o build/computer_info.o; fi
-                  if [ -f src/another_source.c ]; then x86_64-w64-mingw32-gcc -Iinclude -I$CURL_INCLUDE_PATH -c src/another_source.c -o build/another_source.o; fi
-
-            - name: Link objects and create executable
-              run: |
-                  OBJECTS="build/http.o build/main.o"
-                  if [ -f build/uid.o ]; then OBJECTS="$OBJECTS build/uid.o"; fi
-                  if [ -f build/computer_info.o ]; then OBJECTS="$OBJECTS build/computer_info.o"; fi
-                  if [ -f build/another_source.o ]; then OBJECTS="$OBJECTS build/another_source.o"; fi
-                  x86_64-w64-mingw32-gcc $OBJECTS -o build/main.exe -L$CURL_LIB_PATH -lcurl -lole32 -luuid
+              run: x86_64-w64-mingw32-gcc build/http.o build/main.o -o build/main.exe -L$CURL_LIB_PATH -lcurl -lole32 -luuid
 
             - name: Clean up object files
               run: |
