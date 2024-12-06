@@ -17,10 +17,10 @@ jobs:
               run: |
                   sudo apt update
                   sudo apt install -y mingw-w64
-                  wget https://curl.se/windows/dl-7.79.1_2/curl-7.79.1_2-win64-mingw.zip
-                  unzip curl-7.79.1_2-win64-mingw.zip -d /usr/local/mingw64
-                  export CURL_INCLUDE_PATH=/usr/local/mingw64/curl-7.79.1_2-win64-mingw/include
-                  export CURL_LIB_PATH=/usr/local/mingw64/curl-7.79.1_2-win64-mingw/lib
+                  wget https://curl.se/windows/dl-8.11.0_4/curl-8.11.0_4-win64-mingw.zip
+                  unzip curl-7.87.0_2-win64-mingw.zip -d /usr/local/mingw64
+                  export CURL_INCLUDE_PATH=/usr/local/mingw64/curl-7.87.0_2-win64-mingw/include
+                  export CURL_LIB_PATH=/usr/local/mingw64/curl-7.87.0_2-win64-mingw/lib
 
             - name: Create build directory
               run: mkdir -p build
