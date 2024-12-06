@@ -1,23 +1,41 @@
 name: C/C++ CI
 
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    push:
+        branches: ["main"]
+    pull_request:
+        branches: ["main"]
 
 jobs:
-  build:
+    build:
+        runs-on: ubuntu-latest
 
-    runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
 
-    steps:
-    - uses: actions/checkout@v4
-    - name: configure
-      run: ./configure
-    - name: make
-      run: make
-    - name: make check
-      run: make check
-    - name: make distcheck
-      run: make distcheck
+            - name: Install dependencies
+              run: |
+                  sudo apt update
+                  sudo apt install -y mingw-w64
+
+            - name: Set up MinGW environment
+              run: |
+                  export CURL_INCLUDE_PATH=/usr/local/mingw64/include
+                  export CURL_LIB_PATH=/usr/local/mingw64/lib
+
+            - name: Create build directory
+              run: mkdir -p build
+
+            - name: Compile http.c
+              run: x86_64-w64-mingw32-gcc -Iinclude -I$CURL_INCLUDE_PATH -c src/http.c -o build/http.o
+
+            - name: Compile main.c
+              run: x86_64-w64-mingw32-gcc -Iinclude -I$CURL_INCLUDE_PATH -c src/main.c -o build/main.o
+
+            - name: Link objects and create executable
+              run: x86_64-w64-mingw32-gcc build/http.o build/main.o -o build/main.exe -L$CURL_LIB_PATH -lcurl -lole32 -luuid
+
+            - name: Clean up object files
+              run: |
+                  rm build/main.o
+                  rm build/http.o
