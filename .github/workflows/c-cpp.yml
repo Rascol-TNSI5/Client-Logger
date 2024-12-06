@@ -22,6 +22,11 @@ jobs:
                   export CURL_INCLUDE_PATH=/usr/local/mingw64/curl-8.11.0_4-win64-mingw/include
                   export CURL_LIB_PATH=/usr/local/mingw64/curl-8.11.0_4-win64-mingw/lib
 
+            - name: Set environment variables
+              run: |
+                  echo "CURL_INCLUDE_PATH=/usr/local/mingw64/curl-8.11.0_4-win64-mingw/include" >> $GITHUB_ENV
+                  echo "CURL_LIB_PATH=/usr/local/mingw64/curl-8.11.0_4-win64-mingw/lib" >> $GITHUB_ENV
+
             - name: Create build directory
               run: mkdir -p build
 
