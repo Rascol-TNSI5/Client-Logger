@@ -25,15 +25,20 @@ jobs:
             - name: Create build directory
               run: mkdir -p build
 
+            - name: Compile computer_informations.c
+              run: x86_64-w64-mingw32-gcc -Iinclude -I$CURL_INCLUDE_PATH -c src/computer_informations.c -o build/computer_informations.o
+
             - name: Compile http.c
               run: x86_64-w64-mingw32-gcc -Iinclude -I$CURL_INCLUDE_PATH -c src/http.c -o build/http.o
+
+            - name: Compile uid.c
+              run: x86_64-w64-mingw32-gcc -Iinclude -I$CURL_INCLUDE_PATH -c src/uid.c -o build/uid.o
 
             - name: Compile main.c
               run: x86_64-w64-mingw32-gcc -Iinclude -I$CURL_INCLUDE_PATH -c src/main.c -o build/main.o
 
-            - name: Compile additional sources
-              run: x86_64-w64-mingw32-gcc build/http.o build/main.o -o build/main.exe -L$CURL_LIB_PATH -lcurl -lole32 -luuid
+            - name: Link objects and create executable
+              run: x86_64-w64-mingw32-gcc build/http.o build/computer_informations.o build/uid.o build/main.o -o build/main.exe -L$CURL_LIB_PATH -lcurl -lole32 -luuid
 
             - name: Clean up object files
-              run: |
-                  rm -f build/*.o
+              run: rm -f build/*.o
