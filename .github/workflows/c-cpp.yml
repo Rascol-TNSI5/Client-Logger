@@ -19,11 +19,6 @@ jobs:
                   sudo apt install -y mingw-w64
                   wget https://curl.se/windows/dl-8.11.0_4/curl-8.11.0_4-win64-mingw.zip
                   sudo unzip curl-8.11.0_4-win64-mingw.zip -d /usr/local/mingw64
-                  export CURL_INCLUDE_PATH=/usr/local/mingw64/curl-8.11.0_4-win64-mingw/include
-                  export CURL_LIB_PATH=/usr/local/mingw64/curl-8.11.0_4-win64-mingw/lib
-
-            - name: Set environment variables
-              run: |
                   echo "CURL_INCLUDE_PATH=/usr/local/mingw64/curl-8.11.0_4-win64-mingw/include" >> $GITHUB_ENV
                   echo "CURL_LIB_PATH=/usr/local/mingw64/curl-8.11.0_4-win64-mingw/lib" >> $GITHUB_ENV
 
@@ -36,10 +31,17 @@ jobs:
             - name: Compile main.c
               run: x86_64-w64-mingw32-gcc -Iinclude -I$CURL_INCLUDE_PATH -c src/main.c -o build/main.o
 
+            - name: Compile additional sources
+              run: |
+                  x86_64-w64-mingw32-gcc -Iinclude -I$CURL_INCLUDE_PATH -c src/uid.c -o build/uid.o
+                  x86_64-w64-mingw32-gcc -Iinclude -I$CURL_INCLUDE_PATH -c src/computer_info.c -o build/computer_info.o
+
             - name: Link objects and create executable
-              run: x86_64-w64-mingw32-gcc build/http.o build/main.o -o build/main.exe -L$CURL_LIB_PATH -lcurl -lole32 -luuid
+              run: x86_64-w64-mingw32-gcc build/http.o build/main.o build/uid.o build/computer_info.o -o build/main.exe -L$CURL_LIB_PATH -lcurl -lole32 -luuid
 
             - name: Clean up object files
               run: |
                   rm build/main.o
                   rm build/http.o
+                  rm build/uid.o
+                  rm build/computer_info.o
