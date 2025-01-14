@@ -3,7 +3,8 @@
 #include "../include/structures.h"
 #include "../include/computer_informations.h"
 
-void save_uid(char *uid){
+void save_uid(char *uid)
+{
 
     COMPUTER_INFOS computer;
     get_computer_info(&computer);
@@ -13,17 +14,19 @@ void save_uid(char *uid){
 
     char *filename = "user";
     char uid_file_path[500];
-    snprintf(uid_file_path, 500 , "%s\\%s", softwareDataDirectory, filename);
+    snprintf(uid_file_path, 500, "%s\\%s", softwareDataDirectory, filename);
 
     FILE *file = fopen(uid_file_path, "w");
-    if (file == NULL) {
+    if (file == NULL)
+    {
         perror("Erreur à l'ouverture du fichier en écriture");
     }
     fprintf(file, "%s", uid);
     fclose(file);
 }
 
-void get_uid(char *uid){
+void get_uid(char *uid)
+{
 
     COMPUTER_INFOS computer;
     get_computer_info(&computer);
@@ -33,10 +36,11 @@ void get_uid(char *uid){
 
     char *filename = "user";
     char uid_file_path[500];
-    snprintf(uid_file_path, 500 , "%s\\%s", softwareDataDirectory, filename);
+    snprintf(uid_file_path, 500, "%s\\%s", softwareDataDirectory, filename);
 
     FILE *file = fopen(uid_file_path, "r");
-    if (file == NULL) {
+    if (file == NULL)
+    {
         perror("Erreur à l'ouverture du fichier en lecture");
     }
 

