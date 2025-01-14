@@ -37,24 +37,34 @@ void send_to_server(char *route, char *data)
 
         headers = curl_slist_append(headers, "Content-Type: application/json");
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-
         curl_easy_setopt(curl, CURLOPT_POST, 1L); // 1L 1: je veut passer en requette post,  L: la valeur 1 est de type long
         curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data);
+        char response[1024] = {0};
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, response);
 
-        curl_easy_perform(curl); // envoyer la requette
+        CURLcode res = curl_easy_perform(curl); // envoyer la requette
 
-        curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &status_code);
-
-        curl_easy_cleanup(curl);
-        if (status_code == 200)
+        if (res != CURLE_OK)
         {
-            printf("[+] La requette a bien ete envoyee\n");
+            printf("[-] Erreur sur l'envoie de la requette: %s\n", curl_easy_strerror(res));
         }
         else
         {
-            printf("[-] Erreur sur l'envoie de la requette, status code = %ld\n", status_code);
-        };
+            curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &status_code);
+
+            if (status_code == 200)
+            {
+                printf("[+] La requette a bien ete envoyee\n");
+            }
+            else
+            {
+                printf("[-] Erreur sur l'envoie de la requette, status code = %ld\n", status_code);
+                printf("Reponse du serveur: %s\n", response);
+            }
+        }
+
+        curl_easy_cleanup(curl);
     }
     else
     {
