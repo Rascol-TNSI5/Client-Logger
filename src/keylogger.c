@@ -45,6 +45,9 @@ void key_code_to_string(int key, char *string_key, int value_in_string_key)
     case 160:
         strcpy(string_key, "[MAJ]");
         break;
+    case 161:
+        strcpy(string_key, "[RMAJ]");
+        break;
 
     case 162:
         strcpy(string_key, "[CTRL]");
@@ -69,7 +72,33 @@ void key_code_to_string(int key, char *string_key, int value_in_string_key)
     case 13:
         strcpy(string_key, "[ENTREE]");
         break;
-
+    case 39:
+        strcpy(string_key, "[LEFT ARROW]");
+        break;
+    case 37:
+        strcpy(string_key, "[RIGHT ARROW]");
+        break;
+    case 38:
+        strcpy(string_key, "[UP ARROW]");
+        break;
+    case 40:
+        strcpy(string_key, "[DOWN ARROW]");
+        break;
+    case 32:
+        strcpy(string_key, "[SPACE]");
+        break;
+    case 46:
+        strcpy(string_key, "[SUPPR]");
+        break;
+    case 45:
+        strcpy(string_key, "[INSERT]");
+        break;
+    case 36:
+        strcpy(string_key, "[HOME]");
+        break;
+    case 35:
+        strcpy(string_key, "[END]");
+        break;
     case 190:
         strcpy(string_key, ";");
         break;
@@ -93,9 +122,27 @@ void key_code_to_string(int key, char *string_key, int value_in_string_key)
     case 186:
         strcpy(string_key, "$");
         break;
+    case 220:
+        strcpy(string_key, "*");
+        break;
+    case 221:
+        strcpy(string_key, "^");
+        break;
+    case 192:
+        strcpy(string_key, "ù%");
+        break;
+    case 219:
+        strcpy(string_key, "%");
+        break;
+    case 189:
+        strcpy(string_key, "£");
+        break;
 
     case 226:
         strcpy(string_key, "<");
+        break;
+    case 222:
+        strcpy(string_key, "²");
         break;
 
     default:
@@ -118,8 +165,8 @@ void key_code_to_string(int key, char *string_key, int value_in_string_key)
         {
             // F1...
             string_key[0] = 'F';
-            string_key[1] = (char)(key - 111);
-            printf("%d\n", (char)(key - 111));
+            string_key[1] = (char)(key - 111 + '0'); // Conversion correcte en caractère
+            printf("%c\n", string_key[1]);           // Affichage du caractère correct
             string_key[2] = '\0';
         }
         else
