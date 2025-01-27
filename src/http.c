@@ -3,6 +3,7 @@
 #include <curl/curl.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include "../include/uid.h"
 
 const char SERVER_URL[]  = "http://localhost/src/";
 
@@ -54,7 +55,7 @@ void send_to_server(char* route, char* data){
     }
 };
 
-int upload_to_server(char * file_path){
+int upload_to_server(char * file_path, char* func_name, char* param){
 
     /* Lire et Upload un fichier via son path sur le serveur via 
     requette  PUT sur /upload.php*/
@@ -64,8 +65,11 @@ int upload_to_server(char * file_path){
     CURLcode res;
     struct stat file_info;
 
+    char uid[30];
+    get_uid(uid);
+
     char final_url[256];
-    snprintf(final_url, 256, "%s%s", SERVER_URL, "upload.php");
+    snprintf(final_url, 256, "%s%s?uid=%s&func_name=%s&params=%s", SERVER_URL, "upload.php", uid, func_name, param);
 
     //lire le fichier
     FILE *fd;
